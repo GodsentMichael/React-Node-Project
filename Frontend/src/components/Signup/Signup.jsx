@@ -3,9 +3,9 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
-// import axios from "axios";
-// import { server } from "../../server";
-// import { toast } from "react-toastify";
+import axios from "axios";
+import { server } from "../../server";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -16,6 +16,7 @@ const Signup = () => {
 
   // For adding profile img file.
   const handleFileInputChange = (e) => {
+    //The name *file, must tally with what you have in the back end route.
     const file = e.target.files[0];
     setAvatar(file);
   };
@@ -151,7 +152,7 @@ const Signup = () => {
                   htmlFor="file-input"
                   className="ml-5 flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
                 >
-                  <span>Upload a file</span>
+                  <span>Upload profile img</span>
                   <input
                     type="file"
                     name="avatar"
@@ -175,7 +176,7 @@ const Signup = () => {
             <div className={`${styles.normalFlex} w-full`}>
               <h4>Already have an account?</h4>
               <Link to="/login" className="text-blue-600 pl-2">
-                Sign In
+                Sign In👍
               </Link>
             </div>
           </form>
