@@ -39,7 +39,7 @@ const Signup = () => {
         setName("");
         setEmail("");
         setPassword("");
-        setAvatar();
+        setAvatar(); //This is to clear the file input after submission.
       })
       .catch((error) => {
         console.log(error.response.data)
