@@ -16,7 +16,7 @@ const Signup = () => {
 
   // For adding profile img file.
   const handleFileInputChange = (e) => {
-    //The name *file, must tally with what you have in the back end route.
+    //The name *file, must tally with what you have in the backend route.
     const file = e.target.files[0];
     setAvatar(file);
   };
@@ -42,6 +42,7 @@ const Signup = () => {
         setAvatar();
       })
       .catch((error) => {
+        console.log(error.response.data)
         toast.error(error.response.data.message);
       });
   };
@@ -88,6 +89,7 @@ const Signup = () => {
                 <input
                   type="email"
                   name="email"
+                  id="email"
                   autoComplete="email"
                   required
                   value={email}
@@ -108,6 +110,7 @@ const Signup = () => {
                 <input
                   type={visible ? "text" : "password"}
                   name="password"
+                  id="password"
                   autoComplete="current-password"
                   required
                   value={password}
@@ -132,7 +135,7 @@ const Signup = () => {
 
             <div>
               <label
-                htmlFor="avatar"
+                // htmlFor="avatar"
                 className="block text-sm font-medium text-gray-700"
               ></label>
               <div className="mt-2 flex items-center">

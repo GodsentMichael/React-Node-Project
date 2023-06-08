@@ -1,169 +1,164 @@
-const express = require("express");
-const path = require("path");
-const User = require("../models/user");
+const express = require('express');
+const path = require('path');
+const User = require('../models/user');
 const router = express.Router();
-const { upload } = require("../multer");
-const ErrorHandler = require("../utils/ErrorHandler");
-const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
-const fs = require("fs");
-// const jwt = require("jsonwebtoken");
-// const sendMail = require("../utils/sendMail");
-// const sendToken = require("../utils/jwtToken");
+const { upload } = require('../multer');
+const ErrorHandler = require('../utils/ErrorHandler');
+const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
+const fs = require('fs');
+const jwt = require('jsonwebtoken');
+const sendMail = require('../utils/sendMail');
+const sendToken = require('../utils/jwtToken');
 // const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
-
 exports.registerUser = async (req, res, next) => {
-    try {
-      const { name, email, password } = req.body;
-      const userEmail = await User.findOne({ email });
-  
-      if (userEmail) {
-        const filename = req.file.filename;
-        const filePath = `uploads/${filename}`;
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.log(err);
-            res.status(500).json({ message: "Error deleting file" });
-          }
-        });
-        return next(new ErrorHandler("User already exists", 400));
-      }
-  
-      const filename = req.file.filename;
-      const fileUrl = path.join(filename);
-  
-      const user = {
-        name: name,
-        email: email,
-        password: password,
-        avatar: fileUrl,
-      };
-      console.log("The User=>",user);
+	try {
+		const { name, email, password } = req.body;
+		const userEmail = await User.findOne({ email });
 
-      // To save the user to Db
-      const newUser = await User.create( user);
-      res.status(201).json({
-        success: true,
-        newUser,
-      });
-      // const activationToken = createActivationToken(user);
-  
-      // const activationUrl = `https://eshop-tutorial-cefl.vercel.app/activation/${activationToken}`;
-  
-      // try {
-      //   await sendMail({
-      //     email: user.email,
-      //     subject: "Activate your account",
-      //     message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
-      //   });
-      //   res.status(201).json({
-      //     success: true,
-      //     message: `please check your email:- ${user.email} to activate your account!`,
-      //   });
-      // } catch (error) {
-      //   return next(new ErrorHandler(error.message, 500));
-      // }
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 400));
-    }
-  }
+		if (userEmail) {
+			const filename = req.file.filename;
+			const filePath = `uploads/${filename}`;
 
-// create activation token
-// const createActivationToken = (user) => {
-//   return jwt.sign(user, process.env.ACTIVATION_SECRET, {
-//     expiresIn: "5m",
-//   });
-// };
+			// Delete the file synchronously
+			try {
+				fs.unlinkSync(filePath);
+			} catch (error) {
+				console.log(error);
+				return res.status(500).json({ message: 'Error deleting file' });
+			}
 
-// activate user
-// router.post(
-//   "/activation",
-//   catchAsyncErrors(async (req, res, next) => {
-//     try {
-//       const { activation_token } = req.body;
+			return next(new ErrorHandler('User already exists', 400));
+		}
 
-//       const newUser = jwt.verify(
-//         activation_token,
-//         process.env.ACTIVATION_SECRET
-//       );
+		const filename = req.file?.filename;
+		const fileUrl = path.join(filename);
 
-//       if (!newUser) {
-//         return next(new ErrorHandler("Invalid token", 400));
-//       }
-//       const { name, email, password, avatar } = newUser;
+		const user = {
+			name: name,
+			email: email,
+			password: password,
+			avatar: fileUrl,
+		};
 
-//       let user = await User.findOne({ email });
+		// To activate user before saving to db
+		const activationToken = createActivationToken(user);
 
-//       if (user) {
-//         return next(new ErrorHandler("User already exists", 400));
-//       }
-//       user = await User.create({
-//         name,
-//         email,
-//         avatar,
-//         password,
-//       });
+		const activationUrl = `http://localhost:5173/activation?activation_token=${activationToken}`;
+		// const activationUrl = `https://eshop-tutorial-cefl.vercel.app/activation/${activationToken}`;
 
-//       sendToken(user, 201, res);
-//     } catch (error) {
-//       return next(new ErrorHandler(error.message, 500));
-//     }
-//   })
-// );
+		try {
+			await sendMail({
+				email: user.email,
+				subject: 'Activate your account🎭',
+				message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
+			});
+
+			res.status(201).json({
+				success: true,
+				message: `Please check your email: ${user.email} to activate your account!`,
+			});
+		} catch (error) {
+			console.log('regUser error=>', error);
+			return next(new ErrorHandler(error.message, 500));
+		}
+	} catch (error) {
+		return next(new ErrorHandler(error.message, 400));
+	}
+};
+
+// To create activation token
+const createActivationToken = (user) => {
+	return jwt.sign(user, process.env.ACTIVATION_SECRET || 'somethingsecret', {
+		expiresIn: '7d',
+	});
+};
+
+// To activate user
+exports.activateUser = catchAsyncErrors(async (req, res, next) => {
+	try {
+		const { activation_token } = req.body;
+
+		const newUser = jwt.verify(
+			activation_token,
+			process.env.ACTIVATION_SECRET || 'somethingsecret'
+		);
+
+		if (!newUser) {
+			return next(new ErrorHandler('Invalid token', 400));
+		}
+
+		const { name, email, password, avatar } = newUser;
+
+		let user = await User.findOne({ email });
+
+		if (user) {
+			return next(new ErrorHandler('User already exists', 400));
+		}
+
+		// Create a new user only if no user with the same email exists
+		user = await User.create({
+			name,
+			email,
+			avatar,
+			password,
+		});
+
+		await user.save();
+
+		console.log('Created user=>', user);
+		sendToken(user, 201, res);
+	} catch (error) {
+		return next(new ErrorHandler(error.message, 500));
+	}
+});
 
 // login user
-// router.post(
-//   "/login-user",
-//   catchAsyncErrors(async (req, res, next) => {
-//     try {
-//       const { email, password } = req.body;
+exports.loginUser = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
 
-//       if (!email || !password) {
-//         return next(new ErrorHandler("Please provide the all fields!", 400));
-//       }
+    if (!email || !password) {
+      return next(new ErrorHandler("Please provide the all fields!", 400));
+    }
 
-//       const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email }).select("+password");
 
-//       if (!user) {
-//         return next(new ErrorHandler("User doesn't exists!", 400));
-//       }
+    if (!user) {
+      return next(new ErrorHandler("User doesn't exist!", 400));
+    }
 
-//       const isPasswordValid = await user.comparePassword(password);
+    const isPasswordValid = await user.comparePassword(password);
 
-//       if (!isPasswordValid) {
-//         return next(
-//           new ErrorHandler("Please provide the correct information", 400)
-//         );
-//       }
+    if (!isPasswordValid) {
+      return next(
+        new ErrorHandler("Please provide the correct information", 400)
+      );
+    }
 
-//       sendToken(user, 201, res);
-//     } catch (error) {
-//       return next(new ErrorHandler(error.message, 500));
-//     }
-//   })
-// );
+    sendToken(user, 201, res);
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
 
-// load user
-// router.get(
-//   "/getuser",
-//   isAuthenticated,
-//   catchAsyncErrors(async (req, res, next) => {
-//     try {
-//       const user = await User.findById(req.user.id);
+// load logged in user
+exports.getUser = catchAsyncErrors(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user.id);
 
-//       if (!user) {
-//         return next(new ErrorHandler("User doesn't exists", 400));
-//       }
+      if (!user) {
+        return next(new ErrorHandler("User doesn't exist!", 400));
+      }
 
-//       res.status(200).json({
-//         success: true,
-//         user,
-//       });
-//     } catch (error) {
-//       return next(new ErrorHandler(error.message, 500));
-//     }
-//   })
-// );
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
 
 // log out user
 // router.get(
