@@ -45,7 +45,7 @@ exports.registerUser = async (req, res, next) => {
 		const activationToken = createActivationToken(user);
 
 		const activationUrl = `http://localhost:5173/activation?activation_token=${activationToken}`;
-		// const activationUrl = `https://eshop-tutorial-cefl.vercel.app/activation/${activationToken}`;
+		
 
 		try {
 			await sendMail({
@@ -59,7 +59,6 @@ exports.registerUser = async (req, res, next) => {
 				message: `Please check your email: ${user.email} to activate your account!`,
 			});
 		} catch (error) {
-			console.log('regUser error=>', error);
 			return next(new ErrorHandler(error.message, 500));
 		}
 	} catch (error) {
@@ -106,7 +105,6 @@ exports.activateUser = catchAsyncErrors(async (req, res, next) => {
 
 		await user.save();
 
-		console.log('Created user=>', user);
 		sendToken(user, 201, res);
 	} catch (error) {
 		return next(new ErrorHandler(error.message, 500));
