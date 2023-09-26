@@ -16,6 +16,7 @@ exports.registerUser = async (req, res, next) => {
 		const { name, email, password } = req.body;
 		const userEmail = await User.findOne({ email });
 
+		// IF THERE IS A USER ALREADY, THEN MAKE SURE IT DOESN'T SAVE THE NEW IMG/PROFILE PIC
 		if (userEmail) {
 			const filename = req.file.filename;
 			const filePath = `uploads/${filename}`;
@@ -105,6 +106,7 @@ exports.activateUser = catchAsyncErrors(async (req, res, next) => {
 
 		await user.save();
 
+    // Send the cookie
 		sendToken(user, 201, res);
 	} catch (error) {
 		return next(new ErrorHandler(error.message, 500));
@@ -117,16 +119,18 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return next(new ErrorHandler("Please provide the all fields!", 400));
+      return next(new ErrorHandler("Please provide all the fields!", 400));
     }
 
     const user = await User.findOne({ email }).select("+password");
+	// console.log("USER=>", user)
 
     if (!user) {
       return next(new ErrorHandler("User doesn't exist!", 400));
     }
 
     const isPasswordValid = await user.comparePassword(password);
+	// console.log("ISPASSWORD=>", isPasswordValid)
 
     if (!isPasswordValid) {
       return next(
@@ -134,6 +138,7 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
       );
     }
 
+    // Send the cookie
     sendToken(user, 201, res);
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));

@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { server } from "../../server";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Activation = () => {
   const [error, setError] = useState(false);
@@ -18,7 +20,7 @@ const Activation = () => {
           console.log(res);
         } catch (err) {
           setError(true);
-          toast.error("error sending activation!")
+          toast.error("error sending activation token!")
         }
       };
       sendRequest();

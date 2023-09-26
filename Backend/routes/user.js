@@ -10,7 +10,7 @@ const { isAuthenticated } = require('../middlewares/auth');
 
 router.post("/create-user", upload.single('file'), registerUser);
 router.post("/activation", activateUser);
-router.post("/login-user",isAuthenticated, loginUser);
+router.post("/login-user", loginUser);
 router.get("/getuser",isAuthenticated, getUser);
 
 

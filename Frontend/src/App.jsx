@@ -1,24 +1,26 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { LoginPage, SignupPage, ActivationPage } from './Routes.js';
+import { LoginPage, SignupPage, ActivationPage, HomePage } from './Routes.js';
 import { toast, ToastContainer } from 'react-toastify';
 import { server } from './server';
 import 'react-toastify/dist/ReactToastify.css';
-import './App.css';
-import Store from "./redux/store.js"
+import Store from "./redux/store";
 import { loadUser } from './redux/actions/user.js';
+import './App.css';
 
 const App = () => {
-  useEffect(() => {
-	Store.dispatch(loadUser)
+
+useEffect(() => {
+    Store.dispatch(loadUser());
   }, []);
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/activation" element={<ActivationPage />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/sign-up" element={<SignupPage />} />
+        <Route path="/activation" element={<ActivationPage />} />
         <Route path="/login" element={<LoginPage />} />
         {/* <Route path="*" element={<LoginPage />} /> */}
       </Routes>
