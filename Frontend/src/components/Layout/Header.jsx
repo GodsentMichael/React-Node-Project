@@ -78,6 +78,11 @@ const Header = ({ activeHeading }) => {
                 src="/src/assets/e-shop-logo.png"
                 className="bg-transparent h-12"
                 alt="my-shop-logo"
+                style={{
+                  width: "120px",
+                  filter: "brightness(1) grayScale(10%) contrast(0.9)",
+                  // backgroundColor: "black", 
+                }}
               />
             </Link>
           </div>
