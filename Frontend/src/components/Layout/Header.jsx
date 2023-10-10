@@ -32,19 +32,6 @@ const Header = ({ activeHeading }) => {
   const [openWishlist, setOpenWishlist] = useState(false);
   const [open, setOpen] = useState(false);
 
-  // const handleSearchChange = (e) => {
-  // 	const term = e.target.value;
-  // 	setSearchTerm(term);
-
-  // 	const filteredProducts =
-  // 		allProducts &&
-  // 		allProducts.filter((product) =>
-  // 			productData.name.toLowerCase().includes(term.toLowerCase())
-  // 		);
-  // 	setSearchData(filteredProducts);
-  //   console.log("SETSEARCHDATA=>", setSearchData )
-  // };
-
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
@@ -81,13 +68,11 @@ const Header = ({ activeHeading }) => {
                 style={{
                   width: "120px",
                   filter: "brightness(1) grayScale(10%) contrast(0.9)",
-                  // backgroundColor: "black", 
                 }}
               />
             </Link>
           </div>
-          {/*To Add search box */}
-
+          {/*ADDING SEARCH BOX */}
           <div className="w-[50%] relative">
             <input
               type="text"
@@ -127,7 +112,7 @@ const Header = ({ activeHeading }) => {
             </Link> */}
             <Link to="/seller" >
               <h1 className="text-[#fff] flex items-center">
-                Become Seller <IoIosArrowForward className="ml-1" />
+                Become A Seller <IoIosArrowForward className="ml-1" />
               </h1>
             </Link>
           </div>
