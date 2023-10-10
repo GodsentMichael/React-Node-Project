@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { LoginPage, SignupPage, ActivationPage, HomePage, ProductsPage, BestSellingPage } from './Routes.js';
+import { LoginPage, SignupPage, ActivationPage, HomePage, ProductsPage, BestSellingPage, EventsPage, FAQPage } from './Routes.js';
 import { toast, ToastContainer } from 'react-toastify';
 import { server } from './server';
 import 'react-toastify/dist/ReactToastify.css';
@@ -25,6 +25,8 @@ useEffect(() => {
         {/* <Route path="*" element={<LoginPage />} /> */}
         <Route path='/products' element={<ProductsPage />} />
         <Route path='/best-selling' element={<BestSellingPage />} />
+        <Route path='/events' element={<EventsPage />} />
+        <Route path='/faq' element={<FAQPage />} />
       </Routes>
 
       <ToastContainer

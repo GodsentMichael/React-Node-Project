@@ -262,36 +262,37 @@ export const categoriesData = [
 
 // product Data
 export const productData = [
+ 
   {
     id: 1,
-    category: "Computers and Laptops",
-    name: "MacBook pro M2 chipset 256gb ssd 8gb ram space-gray color with apple 1 year warranty",
+    category: "Others",
+    name: "New Fashionable Watch for men 2023 with multiple colors",
     description:
-    "Introducing the MacBook Pro with M2 Chipset, a cutting-edge computing marvel designed to elevate your digital experience. This sleek and sophisticated laptop boasts a 256GB SSD for lightning-fast storage, coupled with 8GB of RAM to ensure seamless multitasking. Its stunning space gray finish adds a touch of elegance to your workspace, and with Apple's trusted 1-year warranty, you can rest assured that your investment is protected.Why choose the MacBook Pro with M2 Chipset? Performance Redefined, Ample Storage, Effortless Multitasking, Elegant Design, 1-Year Warranty",
+      "Introducing the New Fashionable Watch for Men 2023, a stunning timepiece that combines style and functionality. Available in a variety of captivating colors, this watch is designed to make a statement while keeping you punctual.Why Choose the New Fashionable Watch for Men 2023?Contemporary Design: This watch boasts a modern and fashionable design that complements both casual and formal attire. It's more than a timekeeper; it's a fashion accessory.Color Variety: Express your personal style with a wide range of colors to choose from. Whether you prefer classic black, sophisticated silver, or vibrant red, there's a shade for every occasion.",
     image_Url: [
       {
         public_id: "test",
-        url: "https://s.alicdn.com/@sc04/kf/A572644c4da764e499a6d459bd45a248aL.jpg_960x960.jpg",
+        url: "https://baajoo.com/wp-content/uploads/2022/03/mtp-vd02g-1eudf-600x600.jpg",
       },
       {
         public_id: "test",
-        url: "https://s.alicdn.com/@sc04/kf/A572644c4da764e499a6d459bd45a248aL.jpg_960x960.jpg",
+        url: "https://baajoo.com/wp-content/uploads/2022/03/mtp-vd02g-1eudf-600x600.jpg",
       },
     ],
     shop: {
-      name: "Apple inc.",
+      name: "Shahriar Watch House",
       shop_avatar: {
         public_id: "test",
         url: "https://www.hatchwise.com/wp-content/uploads/2022/05/amazon-logo-1024x683.png",
       },
       ratings: 4.2,
+      category: "Others",
     },
-    price: 1099,
-    discount_price: 1049,
+    price: 100,
+    discount_price: 79,
     rating: 4,
-    total_sell: 35,
+    total_sell: 12,
     stock: 10,
-    
   },
   {
     id: 2,
@@ -355,37 +356,39 @@ export const productData = [
     stock: 10,
     category: "Computers & Laptop",
   },
+  
   {
     id: 4,
-    category: "Others",
-    name: "New Fashionable Watch for men 2023 with multiple colors",
+    category: "Computers and Laptops",
+    name: "MacBook pro M2 chipset 256gb ssd 8gb ram space-gray color with apple 1 year warranty",
     description:
-      "Introducing the New Fashionable Watch for Men 2023, a stunning timepiece that combines style and functionality. Available in a variety of captivating colors, this watch is designed to make a statement while keeping you punctual.Why Choose the New Fashionable Watch for Men 2023?Contemporary Design: This watch boasts a modern and fashionable design that complements both casual and formal attire. It's more than a timekeeper; it's a fashion accessory.Color Variety: Express your personal style with a wide range of colors to choose from. Whether you prefer classic black, sophisticated silver, or vibrant red, there's a shade for every occasion.",
+    "Introducing the MacBook Pro with M2 Chipset, a cutting-edge computing marvel designed to elevate your digital experience. This sleek and sophisticated laptop boasts a 256GB SSD for lightning-fast storage, coupled with 8GB of RAM to ensure seamless multitasking. Its stunning space gray finish adds a touch of elegance to your workspace, and with Apple's trusted 1-year warranty, you can rest assured that your investment is protected.Why choose the MacBook Pro with M2 Chipset? Performance Redefined, Ample Storage, Effortless Multitasking, Elegant Design, 1-Year Warranty",
     image_Url: [
       {
         public_id: "test",
-        url: "https://baajoo.com/wp-content/uploads/2022/03/mtp-vd02g-1eudf-600x600.jpg",
+        url: "https://s.alicdn.com/@sc04/kf/A572644c4da764e499a6d459bd45a248aL.jpg_960x960.jpg",
       },
       {
         public_id: "test",
-        url: "https://baajoo.com/wp-content/uploads/2022/03/mtp-vd02g-1eudf-600x600.jpg",
+        url: "https://s.alicdn.com/@sc04/kf/A572644c4da764e499a6d459bd45a248aL.jpg_960x960.jpg",
       },
     ],
     shop: {
-      name: "Shahriar Watch House",
+      name: "Apple inc.",
       shop_avatar: {
         public_id: "test",
         url: "https://www.hatchwise.com/wp-content/uploads/2022/05/amazon-logo-1024x683.png",
       },
       ratings: 4.2,
-      category: "Others",
     },
-    price: 100,
-    discount_price: 79,
+    price: 1099,
+    discount_price: 1049,
     rating: 4,
-    total_sell: 12,
+    total_sell: 35,
     stock: 10,
+    
   },
+
   {
     id: 5,
     category: "Shoes",
