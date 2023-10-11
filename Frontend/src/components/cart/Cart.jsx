@@ -10,21 +10,43 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 const Cart = ({ setOpenCart }) => {
-  const { cart } = useSelector((state) => state.cart);
-  const dispatch = useDispatch();
+  const cartData = [
+    {
+      name:"Iphone 14 pro max 256gb and 8gb ram silver colour",
+      description: "Durable phones for nice feeling",
+      price: 1000,
+    },
+    {
+      name:"Iphone 14 pro max 256gb and 8gb ram silver colour",
+      description: "Durable phones for nice feeling",
+      price: 1000,
+    },
+    {
+      name:"Iphone 14 pro max 256gb and 8gb ram silver colour",
+      description: "Durable phones for nice feeling",
+      price: 1000,
+    },
+    {
+      name:"Iphone 14 pro max 256gb and 8gb ram silver colour",
+      description: "Durable phones for nice feeling",
+      price: 1000,
+    },
+  ]
+  // const { cart } = useSelector((state) => state.cart);
+  // const dispatch = useDispatch();
 
-  const removeFromCartHandler = (data) => {
-    dispatch(removeFromCart(data));
-  };
+  // const removeFromCartHandler = (data) => {
+  //   dispatch(removeFromCart(data));
+  // };
 
-  const totalPrice = cart.reduce(
-    (acc, item) => acc + item.qty * item.discountPrice,
-    0
-  );
+  // const totalPrice = cart.reduce(
+  //   (acc, item) => acc + item.qty * item.discountPrice,
+  //   0
+  // );
 
-  const quantityChangeHandler = (data) => {
-    dispatch(addTocart(data));
-  };
+  // const quantityChangeHandler = (data) => {
+  //   dispatch(addTocart(data));
+  // };
 
   return (
     <div className="fixed top-0 left-0 w-full bg-[#0000004b] h-screen z-10">

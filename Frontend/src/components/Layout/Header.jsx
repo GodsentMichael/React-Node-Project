@@ -198,7 +198,7 @@ const Header = ({ activeHeading }) => {
             </div>
 
             {/* cart popup */}
-            {/* {openCart ? <Cart setOpenCart={setOpenCart} /> : null} */}
+            {openCart ? <Cart setOpenCart={setOpenCart} /> : null}
 
             {/* wishlist popup */}
             {openWishlist ? (
