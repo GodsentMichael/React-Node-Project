@@ -1,136 +1,166 @@
-const express = require('express');
-const path = require('path');
-const User = require('../models/user');
+const express = require("express");
+const path = require("path");
+const User = require("../models/user");
 const router = express.Router();
-const { upload } = require('../multer');
-const ErrorHandler = require('../utils/ErrorHandler');
-const catchAsyncErrors = require('../middlewares/catchAsyncErrors');
-const fs = require('fs');
-const jwt = require('jsonwebtoken');
-const sendMail = require('../utils/sendMail');
-const sendToken = require('../utils/jwtToken');
+const { upload } = require("../multer");
+const ErrorHandler = require("../utils/ErrorHandler");
+const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
+const fs = require("fs");
+const jwt = require("jsonwebtoken");
+const sendMail = require("../utils/sendMail");
+const sendToken = require("../utils/jwtToken");
+const dotenv = require("dotenv").config()
 // const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
 exports.registerUser = async (req, res, next) => {
-	try {
-		const { name, email, password } = req.body;
-		const userEmail = await User.findOne({ email });
+  try {
+    const { name, email, password } = req.body;
+    const userEmail = await User.findOne({ email });
+    // console.log("USER EMAIL=>", userEmail);
 
-		// IF THERE IS A USER ALREADY, THEN MAKE SURE IT DOESN'T SAVE THE NEW IMG/PROFILE PIC
-		if (userEmail) {
-			const filename = req.file.filename;
-			const filePath = `uploads/${filename}`;
+    // IF THERE IS A USER ALREADY, THEN MAKE SURE IT DOESN'T SAVE THE NEW IMG/PROFILE PIC
+    if (userEmail) {
+      const filename = req.file.filename;
+      const filePath = `uploads/${filename}`;
 
-			// Delete the file synchronously
-			try {
-				fs.unlinkSync(filePath);
-			} catch (error) {
-				console.log(error);
-				return res.status(500).json({ message: 'Error deleting file' });
-			}
+      // DELETE THE FILE SYNCHRONOUSLY
+      try {
+        fs.unlinkSync(filePath);
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Error deleting file" });
+      }
 
-			return next(new ErrorHandler('User already exists', 400));
-		}
+      return next(new ErrorHandler("User already exists", 400));
+    }
 
-		const filename = req.file?.filename;
-		const fileUrl = path.join(filename);
+    const filename = req.file?.filename;
+    const fileUrl = path.join(filename);
 
-		const user = {
-			name: name,
-			email: email,
-			password: password,
-			avatar: fileUrl,
-		};
+    const user = {
+      name: name,
+      email: email,
+      password: password,
+      avatar: fileUrl,
+    };
 
-		// To activate user before saving to db
-		const activationToken = createActivationToken(user);
+    // Check if the user already exists and is activated
+    const existingUser = await User.findOne({ email });
 
-		const activationUrl = `http://localhost:5173/activation?activation_token=${activationToken}`;
-		
+    if (existingUser) {
+      if (existingUser.activated) {
+        return res.status(400).json({
+          message: "User is already registered and activated.",
+        });
+      } else {
+		return res.status(400).json({
+		  message:
+			"Activation email already sent. Please check your email for the activation link.",
+		});
+	  }
+    }
 
-		try {
-			await sendMail({
-				email: user.email,
-				subject: 'Activate your account🎭',
-				message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
-			});
+	// TO ACTIVATE THE USER BEFORE SAVING TO DB
+    const activationToken = createActivationToken(user);
 
-			res.status(201).json({
-				success: true,
-				message: `Please check your email: ${user.email} to activate your account!`,
-			});
-		} catch (error) {
-			return next(new ErrorHandler(error.message, 500));
-		}
-	} catch (error) {
-		return next(new ErrorHandler(error.message, 400));
-	}
+    const activationUrl = `http://localhost:5173/activation?activation_token=${activationToken}`;
+
+    // If the user doesn't exist, create a new user and send the activation email.
+    await User.create({
+      name,
+      email,
+      avatar: fileUrl,
+      password,
+      activated: false, 
+    });
+  
+    try {
+      await sendMail({
+        email: user.email,
+        subject: "Activate your account🎭",
+        message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
+      });
+
+      res.status(201).json({
+        success: true,
+        message: `Please check your email: ${user.email} to activate your account!`,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 400));
+  }
 };
 
 // To create activation token
 const createActivationToken = (user) => {
-	return jwt.sign(user, process.env.ACTIVATION_SECRET || 'somethingsecret', {
-		expiresIn: '7d',
+	const token = jwt.sign(user, process.env.ACTIVATION_SECRET || "somethingsecret", {
+	  expiresIn: "7d",
 	});
-};
-
+	return token;
+  };
+  
 // To activate user
 exports.activateUser = catchAsyncErrors(async (req, res, next) => {
 	try {
-		const { activation_token } = req.body;
-
-		const newUser = jwt.verify(
-			activation_token,
-			process.env.ACTIVATION_SECRET || 'somethingsecret'
-		);
-
-		if (!newUser) {
-			return next(new ErrorHandler('Invalid token', 400));
-		}
-
-		const { name, email, password, avatar } = newUser;
-
-		let user = await User.findOne({ email });
-
-		if (user) {
-			return next(new ErrorHandler('User already exists', 400));
-		}
-
-		// Create a new user only if no user with the same email exists
-		user = await User.create({
-			name,
-			email,
-			avatar,
-			password,
-		});
-
-		await user.save();
-
-    // Send the cookie
-		sendToken(user, 201, res);
+	  const { activation_token } = req.body;
+  
+	  const newUser = jwt.verify(
+		activation_token,
+		process.env.ACTIVATION_SECRET || "somethingsecret"
+	  );
+  
+	  if (!newUser) {
+		return next(new ErrorHandler("Invalid token", 400));
+	  }
+  
+	  const { name, email, password, avatar } = newUser;
+  
+	  let user = await User.findOne({ email });
+  
+	  if (!user) {
+		return next(new ErrorHandler("User not found", 404));
+	  }
+  
+	  if (user.activated) {
+		return next(new ErrorHandler("User is already activated", 400));
+	  }
+  
+	  // ACTIVATE THE USER
+	  user.activated = true;
+  
+	  // Save the updated user in the database
+	  await user.save();
+  
+	  // Send a success response to the client
+	  return res.status(200).json({ message: "User Activated" });
 	} catch (error) {
-		return next(new ErrorHandler(error.message, 500));
+	  return next(new ErrorHandler(error.message, 500));
 	}
-});
+  });
+  
+
 
 // login user
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   try {
     const { email, password } = req.body;
+	// console.log("USER=>", req.body.email, req.body.password);
 
     if (!email || !password) {
       return next(new ErrorHandler("Please provide all the fields!", 400));
     }
 
     const user = await User.findOne({ email }).select("+password");
-	// console.log("USER=>", user)
+    console.log("USER=>", user);
 
     if (!user) {
       return next(new ErrorHandler("User doesn't exist!", 400));
     }
 
     const isPasswordValid = await user.comparePassword(password);
-	// console.log("ISPASSWORD=>", isPasswordValid)
+    // console.log("ISPASSWORD=>", isPasswordValid)
 
     if (!isPasswordValid) {
       return next(
@@ -147,21 +177,21 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 
 // load logged in user
 exports.getUser = catchAsyncErrors(async (req, res, next) => {
-    try {
-      const user = await User.findById(req.user.id);
+  try {
+    const user = await User.findById(req.user.id);
 
-      if (!user) {
-        return next(new ErrorHandler("User doesn't exist!", 400));
-      }
-
-      res.status(200).json({
-        success: true,
-        user,
-      });
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
+    if (!user) {
+      return next(new ErrorHandler("User doesn't exist!", 400));
     }
-  });
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
 
 // log out user
 // router.get(

@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const user = require('./routes/user')
 const cors = require("cors");
+const dotenv = require("dotenv").config()
 
 
 // Register middlewares

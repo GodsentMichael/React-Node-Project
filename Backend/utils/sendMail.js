@@ -11,13 +11,6 @@ const sendMail = async (options) => {
         },
     });
 
-    // const mailOptions = {
-    //     from: process.env.SMTP_MAIL,
-    //     to: options.email,
-    //     subject: options.subject,
-    //     text: options.message,
-    // };
-
     const mailOptions = {
         // from: process.env.SMTP_MAIL, 
         from: `Godsent Stores <${process.env.SMTP_MAIL}>`,
