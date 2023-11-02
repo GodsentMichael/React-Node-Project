@@ -4,49 +4,26 @@ import { IoBagHandleOutline } from "react-icons/io5";
 import { HiOutlineMinus, HiPlus } from "react-icons/hi";
 import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
-// import { backend_url } from "../../server";
 import { useDispatch, useSelector } from "react-redux";
-// import { addTocart, removeFromCart } from "../../redux/actions/cart";
+import { addTocart, removeFromCart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 
 const Cart = ({ setOpenCart }) => {
-  const cartData = [
-    {
-      name:"Iphone 14 pro max 256gb and 8gb ram silver colour",
-      description: "Durable phones for nice feeling",
-      price: 1000,
-    },
-    {
-      name:"Iphone 14 pro max 256gb and 8gb ram silver colour",
-      description: "Durable phones for nice feeling",
-      price: 1000,
-    },
-    {
-      name:"Iphone 14 pro max 256gb and 8gb ram silver colour",
-      description: "Durable phones for nice feeling",
-      price: 1000,
-    },
-    {
-      name:"Iphone 14 pro max 256gb and 8gb ram silver colour",
-      description: "Durable phones for nice feeling",
-      price: 1000,
-    },
-  ]
-  // const { cart } = useSelector((state) => state.cart);
-  // const dispatch = useDispatch();
+  const { cart } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
 
-  // const removeFromCartHandler = (data) => {
-  //   dispatch(removeFromCart(data));
-  // };
+  const removeFromCartHandler = (data) => {
+    dispatch(removeFromCart(data));
+  };
 
-  // const totalPrice = cart.reduce(
-  //   (acc, item) => acc + item.qty * item.discountPrice,
-  //   0
-  // );
+  const totalPrice = cart.reduce(
+    (acc, item) => acc + item.qty * item.discountPrice,
+    0
+  );
 
-  // const quantityChangeHandler = (data) => {
-  //   dispatch(addTocart(data));
-  // };
+  const quantityChangeHandler = (data) => {
+    dispatch(addTocart(data));
+  };
 
   return (
     <div className="fixed top-0 left-0 w-full bg-[#0000004b] h-screen z-10">
@@ -54,11 +31,11 @@ const Cart = ({ setOpenCart }) => {
         {cart && cart.length === 0 ? (
           <div className="w-full h-screen flex items-center justify-center">
             <div className="flex w-full justify-end pt-5 pr-5 fixed top-3 right-3">
-               <RxCross1 
+              <RxCross1
                 size={25}
                 className="cursor-pointer"
                 onClick={() => setOpenCart(false)}
-                />
+              />
             </div>
             <h5>Cart Items is empty!</h5>
           </div>
@@ -75,7 +52,9 @@ const Cart = ({ setOpenCart }) => {
               {/* Item length */}
               <div className={`${styles.noramlFlex} p-4`}>
                 <IoBagHandleOutline size={25} />
-                <h5 className="pl-2 text-[20px] font-[500]">{cart && cart.length} items</h5>
+                <h5 className="pl-2 text-[20px] font-[500]">
+                  {cart && cart.length} items
+                </h5>
               </div>
 
               {/* cart Single Items */}
@@ -151,7 +130,7 @@ const CartSingle = ({ data, quantityChangeHandler, removeFromCartHandler }) => {
           </div>
         </div>
         <img
-          src={`${backend_url}${data?.images[0]}`}
+          src={`${data?.images[0]?.url}`}
           alt=""
           className="w-[130px] h-min ml-2 mr-2 rounded-[5px]"
         />

@@ -13,17 +13,16 @@ import { CgProfile } from "react-icons/cg";
 import DropDown from "./DropDown";
 import Navbar from "./Navbar";
 import { useSelector } from "react-redux";
-import { backend_url } from "../../server";
 import Cart from "../cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
-// import { RxCross1 } from 'react-icons/rx';
+import { RxCross1 } from "react-icons/rx";
 
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
-  // const { isSeller } = useSelector((state) => state.seller);
-  // const { wishlist } = useSelector((state) => state.wishlist);
-  // const { cart } = useSelector((state) => state.cart);
-  // const { allProducts } = useSelector((state) => state.products);
+  const { isSeller } = useSelector((state) => state.seller);
+  const { wishlist } = useSelector((state) => state.wishlist);
+  const { cart } = useSelector((state) => state.cart);
+  const { allProducts } = useSelector((state) => state.products);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
   const [active, setActive] = useState(false);
@@ -36,14 +35,11 @@ const Header = ({ activeHeading }) => {
     const term = e.target.value;
     setSearchTerm(term);
 
-    // Filter products based on the search term
     const filteredProducts =
-      term.length > 0
-        ? productData.filter((product) =>
-            product.name.toLowerCase().includes(term.toLowerCase())
-          )
-        : null;
-
+      allProducts &&
+      allProducts.filter((product) =>
+        product.name.toLowerCase().includes(term.toLowerCase())
+      );
     setSearchData(filteredProducts);
   };
 
@@ -62,17 +58,12 @@ const Header = ({ activeHeading }) => {
           <div>
             <Link to="/">
               <img
-                src="/src/assets/e-shop-logo.png"
-                className="bg-transparent h-12"
-                alt="my-shop-logo"
-                style={{
-                  width: "120px",
-                  filter: "brightness(1) grayScale(10%) contrast(0.9)",
-                }}
+                src="https://shopo.quomodothemes.website/assets/images/logo.svg"
+                alt=""
               />
             </Link>
           </div>
-          {/*ADDING SEARCH BOX */}
+          {/* search box */}
           <div className="w-[50%] relative">
             <input
               type="text"
@@ -85,34 +76,32 @@ const Header = ({ activeHeading }) => {
               size={30}
               className="absolute right-2 top-1.5 cursor-pointer"
             />
-            {searchData && searchData.length > 0 && (
+            {searchData && searchData.length !== 0 ? (
               <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4">
-                {searchData.map((product) => (
-                  <Link to={`/product/${product.id}`} key={product.id}>
-                    <div className="w-full flex items-start-py-3">
-                      <img
-                        src={product.image_Url[0]?.url}
-                        alt={product.name}
-                        className="w-[40px] h-[40px] mr-[10px]"
-                      />
-                      <h1>{product.name}</h1>
-                    </div>
-                  </Link>
-                ))}
+                {searchData &&
+                  searchData.map((i, index) => {
+                    return (
+                      <Link to={`/product/${i._id}`}>
+                        <div className="w-full flex items-start-py-3">
+                          <img
+                            src={`${i.images[0]?.url}`}
+                            alt=""
+                            className="w-[40px] h-[40px] mr-[10px]"
+                          />
+                          <h1>{i.name}</h1>
+                        </div>
+                      </Link>
+                    );
+                  })}
               </div>
-            )}
+            ) : null}
           </div>
 
           <div className={`${styles.button}`}>
-            {/* <Link to={`${isSeller ? "/dashboard" : "/shop-create"}`}>
+            <Link to={`${isSeller ? "/dashboard" : "/shop-create"}`}>
               <h1 className="text-[#fff] flex items-center">
                 {isSeller ? "Go Dashboard" : "Become Seller"}{" "}
                 <IoIosArrowForward className="ml-1" />
-              </h1>
-            </Link> */}
-            <Link to="/seller" >
-              <h1 className="text-[#fff] flex items-center">
-                Become A Seller <IoIosArrowForward className="ml-1" />
               </h1>
             </Link>
           </div>
@@ -124,7 +113,7 @@ const Header = ({ activeHeading }) => {
         } transition hidden 800px:flex items-center justify-between w-full bg-[#3321c8] h-[70px]`}
       >
         <div
-          className={`${styles.section} relative ${styles.normalFlex} justify-between`}
+          className={`${styles.section} relative ${styles.noramlFlex} justify-between`}
         >
           {/* categories */}
           <div onClick={() => setDropDown(!dropDown)}>
@@ -137,7 +126,7 @@ const Header = ({ activeHeading }) => {
               </button>
               <IoIosArrowDown
                 size={20}
-                className="absolute right-3 top-4 cursor-pointer"
+                className="absolute right-2 top-4 cursor-pointer"
                 onClick={() => setDropDown(!dropDown)}
               />
               {dropDown ? (
@@ -148,23 +137,25 @@ const Header = ({ activeHeading }) => {
               ) : null}
             </div>
           </div>
-
-          {/*The navitems */}
-          <div className={`${styles.normalFlex}`}>
+          {/* navitems */}
+          <div className={`${styles.noramlFlex}`}>
             <Navbar active={activeHeading} />
           </div>
 
           <div className="flex">
-            <div className={`${styles.normalFlex}`}>
+            <div className={`${styles.noramlFlex}`}>
               <div
                 className="relative cursor-pointer mr-[15px]"
                 onClick={() => setOpenWishlist(true)}
-              ><AiOutlineHeart size={30} color="rgb(255 255 255 / 83%)"/>
-                <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 taxt-white font-mono text-[12px] leading-right text-center ">0</span>
-                </div>
+              >
+                <AiOutlineHeart size={30} color="rgb(255 255 255 / 83%)" />
+                <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
+                  {wishlist && wishlist.length}
+                </span>
+              </div>
             </div>
 
-            <div className={`${styles.normalFlex}`}>
+            <div className={`${styles.noramlFlex}`}>
               <div
                 className="relative cursor-pointer mr-[15px]"
                 onClick={() => setOpenCart(true)}
@@ -174,17 +165,17 @@ const Header = ({ activeHeading }) => {
                   color="rgb(255 255 255 / 83%)"
                 />
                 <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                 0 {/* {cart && cart.length} */}
+                  {cart && cart.length}
                 </span>
               </div>
             </div>
 
-            <div className={`${styles.normalFlex}`}>
+            <div className={`${styles.noramlFlex}`}>
               <div className="relative cursor-pointer mr-[15px]">
                 {isAuthenticated ? (
                   <Link to="/profile">
                     <img
-                      src={`${backend_url}${user?.avatar}`}
+                      src={`${user?.avatar?.url}`}
                       className="w-[35px] h-[35px] rounded-full"
                       alt=""
                     />
@@ -209,7 +200,7 @@ const Header = ({ activeHeading }) => {
       </div>
 
       {/* mobile header */}
-      {/* <div
+      <div
         className={`${
           active === true ? "shadow-sm fixed top-0 left-0 z-10" : null
         }
@@ -244,14 +235,14 @@ const Header = ({ activeHeading }) => {
             </div>
           </div>
           {/* cart popup */}
-      {/* {openCart ? <Cart setOpenCart={setOpenCart} /> : null} */}
+          {openCart ? <Cart setOpenCart={setOpenCart} /> : null}
 
-      {/* wishlist popup */}
-      {/* {openWishlist ? <Wishlist setOpenWishlist={setOpenWishlist} /> : null} */}
-      {/* </div> */}
+          {/* wishlist popup */}
+          {openWishlist ? <Wishlist setOpenWishlist={setOpenWishlist} /> : null}
+        </div>
 
-      {/* header sidebar */}
-      {/* {open && (
+        {/* header sidebar */}
+        {open && (
           <div
             className={`fixed w-full bg-[#0000005f] z-20 h-full top-0 left-0`}
           >
@@ -293,7 +284,7 @@ const Header = ({ activeHeading }) => {
                         <Link to={`/product/${Product_name}`}>
                           <div className="flex items-center">
                             <img
-                              src={i.image_Url[0].url}
+                              src={i.image_Url[0]?.url}
                               alt=""
                               className="w-[50px] mr-2"
                             />
@@ -323,7 +314,7 @@ const Header = ({ activeHeading }) => {
                   <div>
                     <Link to="/profile">
                       <img
-                        src={`${backend_url}${user.avatar}`}
+                        src={`${user.avatar?.url}`}
                         alt=""
                         className="w-[60px] h-[60px] rounded-full border-[3px] border-[#0eae88]"
                       />
@@ -348,8 +339,8 @@ const Header = ({ activeHeading }) => {
               </div>
             </div>
           </div>
-        )} */}
-      {/* </div> */}
+        )}
+      </div>
     </>
   );
 };

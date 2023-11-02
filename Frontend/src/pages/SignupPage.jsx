@@ -1,24 +1,21 @@
 import React, { useEffect } from 'react'
-import Signup from '../components/Signup/Signup.jsx'
 import { useSelector } from 'react-redux';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import Signup from "../components/Signup/Signup";
 
 const SignupPage = () => {
   const navigate = useNavigate();
- 
   const { isAuthenticated } = useSelector((state) => state.user);
 
   useEffect(() => {
-   if(isAuthenticated ===  true){
-    navigate("/");
-        window.location.reload(true); 
-   } 
-  }, [isAuthenticated]
-  )
+    if(isAuthenticated === true){
+      navigate("/");
+    }
+  }, [])
   return (
-   <div>
-    <Signup/>
-   </div>
+    <div>
+        <Signup />
+    </div>
   )
 }
 

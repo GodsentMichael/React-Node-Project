@@ -9,7 +9,7 @@ const Categories = () => {
     <>
       <div className={`${styles.section} hidden sm:block`}>
         <div
-          className={`my-12 flex justify-between w-full shadow-sm bg-white p-5 rounded-md`}
+          className={`branding my-12 flex justify-between w-full shadow-sm bg-white p-5 rounded-md`}
         >
           {brandingData &&
             brandingData.map((i, index) => (
@@ -44,7 +44,7 @@ const Categories = () => {
                   <img
                     src={i.image_Url}
                     className="w-[120px] object-cover"
-                    alt="the-category-image"
+                    alt=""
                   />
                 </div>
               );

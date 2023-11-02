@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { upload } = require('../multer');
+const { registerUser } = require('../controller/user');
+const { isAuthenticated } = require('../middleware/auth');
 
-const { registerUser, activateUser, loginUser, getUser } = require('../controllers/user');
-const { isAuthenticated } = require('../middlewares/auth');
-
-router.post("/create-user", upload.single('file'), registerUser);
-router.post("/activation", activateUser);
-router.post("/login-user", loginUser);
-router.get("/getuser",isAuthenticated, getUser);
+router.post("/create-user",  registerUser);
+// router.post("/activation", activateUser);
+// router.post("/login-user", loginUser);
+// router.get("/getuser",isAuthenticated, getUser);
 
 
 
